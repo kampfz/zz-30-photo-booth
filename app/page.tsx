@@ -149,21 +149,33 @@ export default function Home() {
       {step === "preview" && original && (
         <section className="card">
           <h2>Looking good</h2>
-          <p>Happy with this one? Hit the button and we will Y2K it up.</p>
-          <img className="photo-frame" src={original} alt="Your photo, before the Y2K transform" />
           {loading ? (
-            <p className="loading">
-              Making it Y2K<span className="dots" />
-            </p>
-          ) : (
-            <div className="button-row" style={{ marginTop: 16 }}>
-              <button className="btn btn-pink" type="button" onClick={transform}>
-                Make it Y2K
-              </button>
-              <button className="btn btn-ghost" type="button" onClick={retake}>
-                Retake
-              </button>
+            <div className="processing" aria-live="polite">
+              <div className="processing-stars" aria-hidden="true">
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+              </div>
+              <p className="loading">
+                Making it Y2K<span className="dots" />
+              </p>
+              <p className="hint">Warming up the time machine…</p>
             </div>
+          ) : (
+            <>
+              <p>Happy with this one? Hit the button and we will Y2K it up.</p>
+              <img className="photo-frame" src={original} alt="Your photo, before the Y2K transform" />
+              <div className="button-row" style={{ marginTop: 16 }}>
+                <button className="btn btn-pink" type="button" onClick={transform}>
+                  Make it Y2K
+                </button>
+                <button className="btn btn-ghost" type="button" onClick={retake}>
+                  Retake
+                </button>
+              </div>
+            </>
           )}
           {error && <p className="error">{error}</p>}
         </section>
@@ -211,7 +223,6 @@ export default function Home() {
           <ellipse cx="76" cy="54" rx="15" ry="20" fill="#2563eb" stroke="#1c0a4d" strokeWidth="3" />
           <path d="M30 57 q-4 18 2 34 M60 53 q4 18 -2 34 M76 74 q-2 14 2 24" fill="none" stroke="#1c0a4d" strokeWidth="2" />
         </svg>
-        <p className="footer">Easy Lover • Back room • Tonight 9 PM – 12 AM</p>
       </div>
     </main>
   );
