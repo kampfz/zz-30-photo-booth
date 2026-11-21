@@ -239,31 +239,6 @@ button {
   text-align: center;
 }
 
-.strip {
-  margin-top: 8px;
-}
-
-.strip h3 {
-  font-family: var(--font-bungee), "Arial Black", sans-serif;
-  font-size: 16px;
-  margin: 0 0 10px;
-  text-align: center;
-}
-
-.strip-grid {
-  display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.strip-grid img {
-  aspect-ratio: 1;
-  border: 2px solid #1c0a4d;
-  border-radius: 12px;
-  object-fit: cover;
-  width: 100%;
-}
-
 .tagline-wrap {
   position: relative;
 }

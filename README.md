@@ -10,7 +10,7 @@ A guest scans a QR code, lands on the site, takes a photo or uploads one, and Go
 2. They tap **Take a photo** (opens the phone camera) or **Upload a photo** (camera roll).
 3. They preview the photo and tap **Make it Y2K**.
 4. The photo goes to `POST /api/transform`, which calls Gemini server side and returns a restyled image.
-5. The guest can **SAVE/SHARE** (native share sheet, falls back to a download) or **Take another**. When the transformed photo lands, it pops in with three balloons floating up over it. Transformed photos from the session show in a strip at the bottom of the page.
+5. The guest can **SAVE/SHARE** (native share sheet, falls back to a download) or **TAKE ANOTHER**. When the transformed photo lands, it pops in with three balloons floating up over it.
 
 ## Tech
 

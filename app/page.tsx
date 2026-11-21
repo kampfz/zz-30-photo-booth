@@ -11,7 +11,6 @@ export default function Home() {
   const [transformed, setTransformed] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [gallery, setGallery] = useState<string[]>([]);
   const [schemeId, setSchemeId] = useState<string | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const uploadInput = useRef<HTMLInputElement>(null);
@@ -137,7 +136,6 @@ export default function Home() {
       const image = data.image;
       setTransformed(image);
       setSchemeId(id);
-      setGallery((g) => [image, ...g].slice(0, 9));
       setStep("done");
     } catch (err) {
       const message = err instanceof Error ? err.message : "The transform failed. Try again.";
@@ -323,24 +321,10 @@ export default function Home() {
               SAVE/SHARE
             </button>
             <button className="btn btn-ghost" type="button" onClick={retake}>
-              Take another
+              TAKE ANOTHER
             </button>
           </div>
           {error && <p className="error">{error}</p>}
-        </section>
-      )}
-
-      {gallery.length > 0 && (
-        <section className="card strip">
-          <h3>Tonight at the booth</h3>
-          <div className="strip-grid">
-            {gallery.map((src, i) => (
-              <img key={`${i}-${src.slice(30, 50)}`} src={src} alt={`Transformed party photo ${i + 1}`} />
-            ))}
-          </div>
-          <p className="hint" style={{ marginTop: 12 }}>
-            This strip only lives on this phone for now. Save your favorites before you close the page.
-          </p>
         </section>
       )}
 
