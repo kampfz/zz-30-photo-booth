@@ -12,6 +12,8 @@ function parseDataUrl(dataUrl: string): { mimeType: string; data: string } | nul
 }
 
 export async function POST(req: Request) {
+  const startedAt = Date.now();
+  const contentLength = req.headers.get("content-length");
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
@@ -24,15 +26,18 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
+    console.error("transform rejected: invalid JSON", JSON.stringify({ contentLength }));
     return NextResponse.json({ error: "That request was not valid JSON." }, { status: 400 });
   }
 
   if (!body.image) {
+    console.error("transform rejected: no image", JSON.stringify({ contentLength }));
     return NextResponse.json({ error: "No photo was sent. Try uploading or taking one again." }, { status: 400 });
   }
 
   const parsed = parseDataUrl(body.image);
   if (!parsed) {
+    console.error("transform rejected: unrecognized format", JSON.stringify({ contentLength }));
     return NextResponse.json({ error: "That photo format was not recognized. Try a JPG or PNG." }, { status: 400 });
   }
 
@@ -57,6 +62,16 @@ export async function POST(req: Request) {
     for (const part of parts) {
       const inline = (part as { inlineData?: { mimeType?: string; data?: string } }).inlineData;
       if (inline?.data) {
+        console.log(
+          "transform ok",
+          JSON.stringify({
+            ms: Date.now() - startedAt,
+            scheme: scheme.id,
+            mime: parsed.mimeType,
+            base64Chars: parsed.data.length,
+            contentLength,
+          }),
+        );
         return NextResponse.json({
           image: `data:${inline.mimeType ?? "image/png"};base64,${inline.data}`,
         });
@@ -67,12 +82,26 @@ export async function POST(req: Request) {
       .map((p) => (p as { text?: string }).text ?? "")
       .join("")
       .trim();
+    console.error(
+      "transform failed: no image in Gemini response",
+      JSON.stringify({ ms: Date.now() - startedAt, scheme: scheme.id, reply: text.slice(0, 200) }),
+    );
     return NextResponse.json(
       { error: text ? `The photo booth answered with words instead of an image: ${text}` : "No image came back. Try again." },
       { status: 502 },
     );
   } catch (err) {
-    console.error("Gemini transform failed:", err);
+    console.error(
+      "transform failed",
+      JSON.stringify({
+        ms: Date.now() - startedAt,
+        scheme: scheme.id,
+        mime: parsed.mimeType,
+        base64Chars: parsed.data.length,
+        contentLength,
+        error: err instanceof Error ? err.message : String(err),
+      }),
+    );
     return NextResponse.json(
       { error: "The transform failed. Check the connection and try again." },
       { status: 502 },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { COLOR_SCHEMES, randomScheme } from "@/lib/style";
 
 type Step = "pick" | "preview" | "done";
@@ -16,21 +16,100 @@ export default function Home() {
   const cameraInput = useRef<HTMLInputElement>(null);
   const uploadInput = useRef<HTMLInputElement>(null);
 
-  function handleFile(file: File | undefined) {
+  /** Read a file as a data URL. */
+  function readFileAsDataUrl(file: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = () => reject(new Error("read failed"));
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /**
+   * Shrink a photo to a 1600px max edge as a JPEG before upload. Vercel rejects
+   * request bodies over ~4.5 MB, and a full-res iPhone photo is bigger than that
+   * once base64-encoded (a 413). Returns null to send the original file untouched
+   * (small photos, or formats the browser cannot decode, like HEIC in Chrome).
+   */
+  async function compressPhoto(file: File): Promise<string | null> {
+    try {
+      let bitmap: ImageBitmap;
+      try {
+        bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+      } catch {
+        const url = URL.createObjectURL(file);
+        try {
+          const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const el = new Image();
+            el.onload = () => resolve(el);
+            el.onerror = () => reject(new Error("image load failed"));
+            el.src = url;
+          });
+          bitmap = await createImageBitmap(img);
+        } finally {
+          URL.revokeObjectURL(url);
+        }
+      }
+      const { width, height } = bitmap;
+      const MAX_EDGE = 1600;
+      const scale = Math.min(1, MAX_EDGE / Math.max(width, height));
+      if (scale === 1 && file.size < 2_000_000) {
+        bitmap.close();
+        return null;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(width * scale));
+      canvas.height = Math.max(1, Math.round(height * scale));
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        bitmap.close();
+        return null;
+      }
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/jpeg", 0.82),
+      );
+      if (!blob) return null;
+      return await readFileAsDataUrl(blob);
+    } catch {
+      return null;
+    }
+  }
+
+  /** Fire-and-forget client error report so it shows up in the server logs. */
+  function reportClientError(context: Record<string, unknown>) {
+    try {
+      fetch("/api/log", {
+        body: JSON.stringify({
+          ...context,
+          url: window.location.href,
+          userAgent: navigator.userAgent,
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      }).catch(() => {});
+    } catch {
+      // Logging must never break the page.
+    }
+  }
+
+  async function handleFile(file: File | undefined) {
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       setError("That file was not a photo. Pick a JPG or PNG.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setOriginal(reader.result as string);
+    setError(null);
+    try {
+      const dataUrl = (await compressPhoto(file)) ?? (await readFileAsDataUrl(file));
+      setOriginal(dataUrl);
       setTransformed(null);
-      setError(null);
       setStep("preview");
-    };
-    reader.onerror = () => setError("Could not read that photo. Try another one.");
-    reader.readAsDataURL(file);
+    } catch {
+      setError("Could not read that photo. Try another one.");
+    }
   }
 
   async function transform() {
@@ -44,14 +123,31 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
-      const data = await res.json();
+      if (res.status === 413) {
+        throw new Error("That photo was too big to send. Try a smaller photo or take a new one.");
+      }
+      let data: { image?: string; error?: string };
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error("The photo booth had a hiccup. Try again.");
+      }
       if (!res.ok) throw new Error(data.error ?? "The transform failed.");
+      if (!data.image) throw new Error("No image came back. Try again.");
       setTransformed(data.image);
       setSchemeId(id);
       setGallery((g) => [data.image, ...g].slice(0, 9));
       setStep("done");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "The transform failed. Try again.");
+      const message = err instanceof Error ? err.message : "The transform failed. Try again.";
+      setError(message);
+      reportClientError({
+        message,
+        source: "transform",
+        schemeId: id,
+        photoBytes: original.length,
+        photoType: original.slice(5, original.indexOf(";")),
+      });
     } finally {
       setLoading(false);
     }
@@ -87,6 +183,30 @@ export default function Home() {
     a.download = "zach-and-zoe-30.png";
     a.click();
   }
+
+  useEffect(() => {
+    function onError(event: ErrorEvent) {
+      reportClientError({
+        message: event.message,
+        source: "window.onerror",
+        filename: event.filename,
+        lineno: event.lineno,
+      });
+    }
+    function onRejection(event: PromiseRejectionEvent) {
+      const reason = event.reason as { message?: string } | null;
+      reportClientError({
+        message: reason?.message ?? String(event.reason),
+        source: "unhandledrejection",
+      });
+    }
+    window.addEventListener("error", onError);
+    window.addEventListener("unhandledrejection", onRejection);
+    return () => {
+      window.removeEventListener("error", onError);
+      window.removeEventListener("unhandledrejection", onRejection);
+    };
+  }, []);
 
   return (
     <main className="booth">

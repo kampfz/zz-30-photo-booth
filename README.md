@@ -59,4 +59,5 @@ it got. The model is `IMAGE_MODEL` in the same file.
 ## Notes
 
 - Photos are not stored on the server. The session strip lives only in the guest's browser.
-- Large photos are sent as base64 in the request body. If a phone sends a very large image and the transform is slow, it is worth compressing on the client before sending.
+- Photos are shrunk to a 1600px max edge as a JPEG before upload. Vercel rejects request bodies over ~4.5 MB, and a full-res iPhone photo is bigger than that once base64-encoded (this was the Nov 21 413). If the browser cannot decode the photo (for example HEIC in Chrome), the original file is sent untouched instead.
+- Client-side errors are reported to POST /api/log so they show up in the Vercel logs. Transform requests are logged with timing, color scheme, and size.
