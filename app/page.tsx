@@ -312,11 +312,8 @@ export default function Home() {
           <p>Save it, share it, show it off. Then go take another one.</p>
           <img className="photo-frame" src={transformed} alt="Your photo, transformed into a Y2K poster" />
           <div className="button-row" style={{ marginTop: 16 }}>
-            <button className="btn btn-yellow" type="button" onClick={download}>
-              Download
-            </button>
             <button className="btn btn-blue" type="button" onClick={share}>
-              Share
+              save/share
             </button>
             <button className="btn btn-ghost" type="button" onClick={retake}>
               Take another
@@ -338,7 +335,7 @@ export default function Home() {
             ))}
           </div>
           <p className="hint" style={{ marginTop: 12 }}>
-            This strip only lives on this phone for now. Download your favorites before you close the page.
+            This strip only lives on this phone for now. Save your favorites before you close the page.
           </p>
         </section>
       )}
