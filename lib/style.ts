@@ -80,6 +80,7 @@ export function buildStylePrompt(scheme: ColorScheme): string {
     "visible anywhere. The final image must be full-bleed: the gradient background and",
     "decorations extend to every edge of the image, with no white border, no letterboxing, and",
     "no visible edge of the original photo.",
+    "The final image must be a vertical 9:16 portrait, Instagram Story format (1080 by 1920).",
     `Cover the background in clip-art stickers in ${scheme.accents}: stars, starbursts, confetti,`,
     "party hats, balloons, a birthday cake.",
     "The ONLY words anywhere in the image are 'Happy 30th Birthday Zach & Zoe', in one big wavy",

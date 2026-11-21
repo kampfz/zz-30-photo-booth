@@ -47,6 +47,10 @@ export async function POST(req: Request) {
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
       model: IMAGE_MODEL,
+      config: {
+        responseModalities: ["IMAGE"],
+        imageConfig: { aspectRatio: "9:16" },
+      },
       contents: [
         {
           role: "user",
