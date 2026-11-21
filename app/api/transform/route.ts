@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
-import { IMAGE_MODEL, STYLE_PROMPT } from "@/lib/style";
+import { buildStylePrompt, COLOR_SCHEMES, DEFAULT_SCHEME, IMAGE_MODEL } from "@/lib/style";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     );
   }
 
-  let body: { image?: string };
+  let body: { image?: string; schemeId?: string };
   try {
     body = await req.json();
   } catch {
@@ -36,6 +36,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "That photo format was not recognized. Try a JPG or PNG." }, { status: 400 });
   }
 
+  const scheme = COLOR_SCHEMES.find((s) => s.id === body.schemeId) ?? DEFAULT_SCHEME;
+
   try {
     const ai = new GoogleGenAI({ apiKey });
     const response = await ai.models.generateContent({
@@ -44,7 +46,7 @@ export async function POST(req: Request) {
         {
           role: "user",
           parts: [
-            { text: STYLE_PROMPT },
+            { text: buildStylePrompt(scheme) },
             { inlineData: { mimeType: parsed.mimeType, data: parsed.data } },
           ],
         },

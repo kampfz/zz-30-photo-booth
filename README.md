@@ -48,7 +48,13 @@ Once deployed, point a QR code at the Vercel URL (for example `https://zz-30-pho
 
 ## Change the photo style
 
-Edit one constant in `lib/style.ts`: `STYLE_PROMPT`. That is the whole style. Change the wording, redeploy (or restart dev), and every new transform uses the new style. The model is `IMAGE_MODEL` in the same file.
+Edit `lib/style.ts`. The prompt is built by `buildStylePrompt(scheme)` from one of the
+`COLOR_SCHEMES` (Sunset Pop, Bubblegum, Lime Rush, Candy Grape, Ocean Pop, Cherry Cola).
+The prompt tells Gemini to completely replace the background with a flat gradient in the
+scheme's colors, keep the people as photographed, and put only the words
+"Happy 30th Birthday Zach & Zoe" on the poster. Every transform picks a random scheme
+automatically (never the same one twice in a row); the result screen shows which scheme
+it got. The model is `IMAGE_MODEL` in the same file.
 
 ## Notes
 

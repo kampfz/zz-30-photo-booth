@@ -1,22 +1,88 @@
 /**
  * THE ONE PLACE TO CHANGE THE PHOTO STYLE.
  *
- * This prompt is sent to Gemini together with the guest's photo.
- * Edit this string to change how every transformed photo looks.
- * Keep it fun and on theme for the party.
+ * The prompt is built from a color scheme by buildStylePrompt() and sent to
+ * Gemini together with the guest's photo. Edit the schemes or the prompt
+ * builder to change how every transformed photo looks. Keep it fun and on
+ * theme for the party.
  */
-export const STYLE_PROMPT = [
-  "Transform this party photo into a loud, maximalist early-2000s Microsoft WordArt poster,",
-  "exactly like a Y2K birthday invite: saturated magenta to orange to yellow gradient background,",
-  "clip-art stickers around the edges (stars, starbursts, confetti, party hats, balloons, a birthday cake).",
-  "The ONLY words anywhere in the image are 'Happy 30th Birthday Zach & Zoe', in one big wavy",
-  "chunky WordArt line with a striped yellow fill, blue outline and hard drop shadow, spelled",
-  "exactly like that. No other text, words, letters or numbers anywhere in the image — no extra",
-  "slogans, no 'turn 30', no dates, no captions.",
-  "Messy, loud, playful and over the top, NOT clean, NOT minimal, NOT modern flat design.",
-  "Keep the people, faces, poses and composition recognizable. Same people, same framing.",
-  "Just restyle the photo and background in that loud Y2K WordArt poster look.",
-].join(" ");
+
+export interface ColorScheme {
+  id: string;
+  name: string;
+  /** Gradient background, e.g. "hot magenta to bright orange to sunny yellow". */
+  gradient: string;
+  /** Sticker and accent colors for the background decorations. */
+  accents: string;
+}
+
+export const COLOR_SCHEMES: ColorScheme[] = [
+  {
+    id: "sunset",
+    name: "Sunset Pop",
+    gradient: "hot magenta to bright orange to sunny yellow",
+    accents: "magenta, orange, yellow, cyan and lime",
+  },
+  {
+    id: "bubblegum",
+    name: "Bubblegum",
+    gradient: "hot pink to purple to electric cyan",
+    accents: "pink, purple, cyan, yellow and white",
+  },
+  {
+    id: "lime",
+    name: "Lime Rush",
+    gradient: "electric lime green to teal to bright yellow",
+    accents: "lime, teal, yellow, magenta and orange",
+  },
+  {
+    id: "grape",
+    name: "Candy Grape",
+    gradient: "deep purple to magenta to bubblegum pink",
+    accents: "purple, magenta, pink, cyan and yellow",
+  },
+  {
+    id: "ocean",
+    name: "Ocean Pop",
+    gradient: "royal blue to cyan to aqua",
+    accents: "blue, cyan, aqua, yellow and hot pink",
+  },
+  {
+    id: "cherry",
+    name: "Cherry Cola",
+    gradient: "cherry red to magenta to tangerine orange",
+    accents: "red, magenta, orange, yellow and purple",
+  },
+];
+
+/** The invite's scheme, used when no scheme is specified. */
+export const DEFAULT_SCHEME = COLOR_SCHEMES[0];
+
+/** Pick a random scheme, never the one passed in (so two transforms in a row never repeat a scheme). */
+export function randomScheme(exceptId?: string): ColorScheme {
+  const pool = COLOR_SCHEMES.filter((s) => s.id !== exceptId);
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/** Build the Gemini prompt for one color scheme. */
+export function buildStylePrompt(scheme: ColorScheme): string {
+  return [
+    "Transform this party photo into a loud, maximalist early-2000s Microsoft WordArt poster,",
+    "exactly like a Y2K birthday invite.",
+    "Completely REPLACE the background: remove everything behind the people — the sky, trees,",
+    "buildings, walls, furniture, the whole original location — and put the people on a flat,",
+    `saturated ${scheme.gradient} gradient background. Nothing of the original background may`,
+    "remain visible anywhere in the image. The people stay in the foreground exactly as",
+    "photographed: same faces, same poses, same clothes, same framing.",
+    `Cover the background in clip-art stickers in ${scheme.accents}: stars, starbursts, confetti,`,
+    "party hats, balloons, a birthday cake.",
+    "The ONLY words anywhere in the image are 'Happy 30th Birthday Zach & Zoe', in one big wavy",
+    "chunky WordArt line with a striped yellow fill, blue outline and hard drop shadow, spelled",
+    "exactly like that. No other text, words, letters or numbers anywhere in the image — no extra",
+    "slogans, no 'turn 30', no dates, no captions.",
+    "Messy, loud, playful and over the top, NOT clean, NOT minimal, NOT modern flat design.",
+  ].join(" ");
+}
 
 /** Gemini image model used for the transform. */
 export const IMAGE_MODEL = "gemini-2.5-flash-image";

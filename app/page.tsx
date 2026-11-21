@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { COLOR_SCHEMES, randomScheme } from "@/lib/style";
 
 type Step = "pick" | "preview" | "done";
 
@@ -11,6 +12,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [gallery, setGallery] = useState<string[]>([]);
+  const [schemeId, setSchemeId] = useState<string | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const uploadInput = useRef<HTMLInputElement>(null);
 
@@ -33,17 +35,19 @@ export default function Home() {
 
   async function transform() {
     if (!original) return;
+    const id = randomScheme(schemeId ?? undefined).id;
     setLoading(true);
     setError(null);
     try {
       const res = await fetch("/api/transform", {
-        body: JSON.stringify({ image: original }),
+        body: JSON.stringify({ image: original, schemeId: id }),
         headers: { "Content-Type": "application/json" },
         method: "POST",
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "The transform failed.");
       setTransformed(data.image);
+      setSchemeId(id);
       setGallery((g) => [data.image, ...g].slice(0, 9));
       setStep("done");
     } catch (err) {
@@ -168,7 +172,7 @@ export default function Home() {
               <p>Happy with this one? Hit the button and we will Y2K it up.</p>
               <img className="photo-frame" src={original} alt="Your photo, before the Y2K transform" />
               <div className="button-row" style={{ marginTop: 16 }}>
-                <button className="btn btn-pink" type="button" onClick={transform}>
+                <button className="btn btn-pink" type="button" onClick={() => transform()}>
                   Make it Y2K
                 </button>
                 <button className="btn btn-ghost" type="button" onClick={retake}>
@@ -197,6 +201,9 @@ export default function Home() {
               Take another
             </button>
           </div>
+          <p className="hint">
+            Color scheme: {COLOR_SCHEMES.find((s) => s.id === schemeId)?.name ?? "Sunset Pop"}
+          </p>
           {error && <p className="error">{error}</p>}
         </section>
       )}
