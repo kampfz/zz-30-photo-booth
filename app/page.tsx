@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { COLOR_SCHEMES, randomScheme } from "@/lib/style";
+import { randomScheme } from "@/lib/style";
 
 type Step = "pick" | "preview" | "done";
 
@@ -228,7 +228,7 @@ export default function Home() {
           <circle cx="29" cy="56" r="3.5" fill="#fff" />
         </svg>
         <p className="tagline">
-          Snap a pic, make it Y2K, take it home. The official Easy Lover birthday photo booth.
+          Snap a pic, make it Y2K, take it home.
         </p>
       </div>
 
@@ -325,9 +325,6 @@ export default function Home() {
               Take another
             </button>
           </div>
-          <p className="hint">
-            Color scheme: {COLOR_SCHEMES.find((s) => s.id === schemeId)?.name ?? "Sunset Pop"}
-          </p>
           {error && <p className="error">{error}</p>}
         </section>
       )}
