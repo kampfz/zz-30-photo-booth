@@ -349,6 +349,14 @@ button {
   100% { opacity: 0; transform: translateY(-200px) scale(1.05); }
 }
 
+.share-nudge {
+  color: #ff2e7e;
+  font-family: var(--font-bungee), "Arial Black", sans-serif;
+  font-size: 18px;
+  margin: 14px 0 0;
+  text-align: center;
+}
+
 /* Processing animation (shown while the AI works, input photo hidden) */
 .processing {
   padding: 24px 0 8px;

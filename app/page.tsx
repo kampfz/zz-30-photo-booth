@@ -317,6 +317,7 @@ export default function Home() {
             </svg>
             <img className="photo-frame" src={transformed} alt="Your photo, transformed into a Y2K poster" />
           </div>
+          <p className="share-nudge">Share the love on Instagram!</p>
           <div className="button-row" style={{ marginTop: 16 }}>
             <button className="btn btn-blue" type="button" onClick={share}>
               SAVE/SHARE
