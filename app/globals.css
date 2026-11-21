@@ -190,17 +190,12 @@ button {
   border: 3px solid #1c0a4d;
   border-radius: 16px;
   display: block;
+  height: auto;
+  /* Fixed pixel cap on purpose: a dvh-based cap resizes the image whenever
+     iOS Safari's toolbar collapses or expands while scrolling. */
   max-height: 420px;
-  max-height: min(420px, 55dvh);
   object-fit: contain;
   width: 100%;
-}
-
-.result-label {
-  font-family: var(--font-bungee), "Arial Black", sans-serif;
-  font-size: 16px;
-  margin: 16px 0 8px;
-  text-align: center;
 }
 
 .loading {

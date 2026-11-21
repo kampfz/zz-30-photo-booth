@@ -102,7 +102,7 @@ export default function Home() {
       <div className="wordart-sub">turn 30!</div>
 
       <p className="tagline">
-        Snap a pic at the party and let Gemini give it the full Y2K treatment. Stars, confetti, big energy.
+        Snap a pic at the party and give it the full Y2K treatment. Stars, confetti, big energy.
       </p>
 
       {step === "pick" && (
@@ -175,12 +175,6 @@ export default function Home() {
               Take another
             </button>
           </div>
-          {original && (
-            <>
-              <p className="result-label">Before</p>
-              <img className="photo-frame" src={original} alt="Your original photo" />
-            </>
-          )}
           {error && <p className="error">{error}</p>}
         </section>
       )}

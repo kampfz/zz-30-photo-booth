@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       .join("")
       .trim();
     return NextResponse.json(
-      { error: text ? `Gemini answered with words instead of an image: ${text}` : "Gemini did not return an image. Try again." },
+      { error: text ? `The photo booth answered with words instead of an image: ${text}` : "No image came back. Try again." },
       { status: 502 },
     );
   } catch (err) {

@@ -7,7 +7,7 @@ const bungee = Bungee({ subsets: ["latin"], variable: "--font-bungee", weight: "
 const nunito = Nunito({ subsets: ["latin"], variable: "--font-body", weight: ["400", "700", "800", "900"] });
 
 export const metadata: Metadata = {
-  description: "Snap a photo at Zach and Zoe's 30th and let Gemini give it the Y2K treatment.",
+  description: "Snap a photo at Zach and Zoe's 30th and give it the Y2K treatment.",
   title: "Zach & Zoe turn 30! Photo Booth",
 };
 
