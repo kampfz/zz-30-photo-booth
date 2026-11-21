@@ -224,7 +224,7 @@ export function buildStylePrompt(scheme: ColorScheme, style: PosterStyle, people
     "DECORATIONS:",
     `Scatter 6 to 10 little Y2K clip-art stickers around the open gradient space and the edges of the poster: ${style.extras.text}.`,
     "Each sticker is small, flat retro clip art with a thin dark outline and a thin white sticker border, slightly tilted, in bright colors that pop against the gradient.",
-    "Stickers never cover a face or the lettering. Stickers are objects only: no characters, animals, faces or people.",
+    "Stickers never cover a face or the lettering. Stickers are simple objects only: no characters, cartoon faces, smileys or people.",
     "A playful cut-and-paste collage: bright gradient, crisp cutout people, big retro lettering, a scatter of little stickers.",
     "",
     people
