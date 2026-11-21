@@ -6,6 +6,8 @@ html,
 body {
   margin: 0;
   padding: 0;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -14,6 +16,15 @@ body {
   color: #1c0a4d;
   font-family: var(--font-body), system-ui, sans-serif;
   min-height: 100vh;
+  min-height: 100dvh;
+}
+
+/* iOS Safari ignores fixed backgrounds and jumps with 100vh; scroll the
+   gradient on touch devices instead. */
+@media (hover: none) {
+  body {
+    background-attachment: scroll;
+  }
 }
 
 button {
@@ -24,7 +35,9 @@ button {
   margin: 0 auto;
   max-width: 560px;
   min-height: 100vh;
-  padding: 20px 16px 48px;
+  min-height: 100dvh;
+  padding: 20px max(16px, env(safe-area-inset-left)) calc(48px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-right));
+  padding-top: max(20px, env(safe-area-inset-top));
   position: relative;
 }
 
@@ -134,8 +147,11 @@ button {
   cursor: pointer;
   font-size: 18px;
   font-weight: 900;
+  min-height: 52px;
   padding: 14px 20px;
   text-align: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
   transition: transform 0.08s ease, box-shadow 0.08s ease;
   width: 100%;
 }
@@ -175,6 +191,7 @@ button {
   border-radius: 16px;
   display: block;
   max-height: 420px;
+  max-height: min(420px, 55dvh);
   object-fit: contain;
   width: 100%;
 }
