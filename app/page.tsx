@@ -134,9 +134,10 @@ export default function Home() {
       }
       if (!res.ok) throw new Error(data.error ?? "The transform failed.");
       if (!data.image) throw new Error("No image came back. Try again.");
-      setTransformed(data.image);
+      const image = data.image;
+      setTransformed(image);
       setSchemeId(id);
-      setGallery((g) => [data.image, ...g].slice(0, 9));
+      setGallery((g) => [image, ...g].slice(0, 9));
       setStep("done");
     } catch (err) {
       const message = err instanceof Error ? err.message : "The transform failed. Try again.";
