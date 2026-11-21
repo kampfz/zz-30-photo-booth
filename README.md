@@ -48,16 +48,27 @@ Once deployed, point a QR code at the Vercel URL (for example `https://zz-30-pho
 
 ## Change the photo style
 
-Edit `lib/style.ts`. The prompt is built by `buildStylePrompt(scheme)` from one of the
-`COLOR_SCHEMES` (Sunset Pop, Bubblegum, Lime Rush, Candy Grape, Ocean Pop, Cherry Cola).
-The prompt tells Gemini to completely replace the background with a flat gradient in the
-scheme's colors, keep the people as photographed, and put only the words
-"Happy 30th Birthday Zach & Zoe" on the poster. Every transform picks a random scheme
-automatically (never the same one twice in a row); the result screen shows which scheme
-it got. The model is `IMAGE_MODEL` in the same file.
+Edit `lib/style.ts`. Each transform builds its prompt from three things:
+
+- **A color scheme** (`COLOR_SCHEMES`: Sunset Pop, Bubblegum, Lime Rush, Candy Grape, Ocean Pop,
+  Cherry Cola). It is picked at random and never repeats twice in a row.
+- **A poster style** (`randomPosterStyle()`). It picks the lettering for "happy birthday"
+  (zebra stripe, rainbow, chrome, wave), the lettering for "zach & zoe" (gold 3D, fire 3D,
+  candy bubble, blue 3D), the layout, zero to two cream label stickers ("Hooray!",
+  "Party Time", ...) and a light decoration, so no two posters look the same. Entries listed
+  twice in those arrays come up more often.
+- **The people in the photo.** Before the image call, a quick text-only call
+  (`PEOPLE_MODEL`, `gemini-2.5-flash`) counts the people and describes each one from left to
+  right. The image prompt then names exactly those people, which stops Gemini from inventing
+  extra ones to fill the tall frame. If the count fails, the prompt falls back to generic
+  "keep the same people" wording.
+
+The image model is `IMAGE_MODEL` in the same file. Each transform is logged with its scheme,
+style id (for example `zebra-yellow/gold-3d/arch-top/t2/none`) and people count, so you can
+match a bad output to the style that made it.
 
 ## Notes
 
-- Photos are not stored on the server. The session strip lives only in the guest's browser.
+- Photos are not stored on the server.
 - Photos are shrunk to a 1600px max edge as a JPEG before upload. Vercel rejects request bodies over ~4.5 MB, and a full-res iPhone photo is bigger than that once base64-encoded (this was the Nov 21 413). If the browser cannot decode the photo (for example HEIC in Chrome), the original file is sent untouched instead.
-- Client-side errors are reported to POST /api/log so they show up in the Vercel logs. Transform requests are logged with timing, color scheme, and size.
+- Client-side errors are reported to POST /api/log so they show up in the Vercel logs. Transform requests are logged with timing, color scheme, poster style, people count, and size.

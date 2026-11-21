@@ -1,6 +1,16 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { NextResponse } from "next/server";
-import { buildStylePrompt, COLOR_SCHEMES, DEFAULT_SCHEME, IMAGE_MODEL } from "@/lib/style";
+import {
+  buildStylePrompt,
+  COLOR_SCHEMES,
+  DEFAULT_SCHEME,
+  IMAGE_MODEL,
+  PEOPLE_MODEL,
+  PEOPLE_PROMPT,
+  type PeopleInfo,
+  posterStyleId,
+  randomPosterStyle,
+} from "@/lib/style";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -9,6 +19,47 @@ function parseDataUrl(dataUrl: string): { mimeType: string; data: string } | nul
   const match = dataUrl.match(/^data:([a-zA-Z0-9]+\/[a-zA-Z0-9+.-]+);base64,(.+)$/);
   if (!match) return null;
   return { mimeType: match[1], data: match[2] };
+}
+
+/**
+ * Count and describe the people in the photo with a quick text-only call, so the image
+ * prompt can name exactly who belongs in the poster. Returns null on any failure or after
+ * 10 seconds; the transform then runs with the generic "same people" wording.
+ */
+async function countPeople(ai: GoogleGenAI, image: { mimeType: string; data: string }): Promise<PeopleInfo | null> {
+  const call = ai.models
+    .generateContent({
+      model: PEOPLE_MODEL,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            count: { type: Type.INTEGER },
+            people: { type: Type.ARRAY, items: { type: Type.STRING } },
+          },
+          required: ["count", "people"],
+        },
+        thinkingConfig: { thinkingBudget: 0 },
+        temperature: 0,
+      },
+      contents: [{ role: "user", parts: [{ text: PEOPLE_PROMPT }, { inlineData: image }] }],
+    })
+    .then((res) => {
+      const parsed = JSON.parse(res.text ?? "") as Partial<PeopleInfo>;
+      const people = Array.isArray(parsed.people) ? parsed.people.filter((p) => typeof p === "string").slice(0, 12) : [];
+      const count = typeof parsed.count === "number" ? parsed.count : people.length;
+      // Only trust a clean answer: 1 to 12 people and one description each.
+      if (count < 1 || count > 12 || people.length !== count) return null;
+      return { count, people };
+    });
+  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 10_000));
+  try {
+    return await Promise.race([call, timeout]);
+  } catch (err) {
+    console.error("people count failed", err instanceof Error ? err.message : String(err));
+    return null;
+  }
 }
 
 export async function POST(req: Request) {
@@ -42,9 +93,13 @@ export async function POST(req: Request) {
   }
 
   const scheme = COLOR_SCHEMES.find((s) => s.id === body.schemeId) ?? DEFAULT_SCHEME;
+  const style = randomPosterStyle();
+  const styleId = posterStyleId(style);
 
   try {
     const ai = new GoogleGenAI({ apiKey });
+    const people = await countPeople(ai, parsed);
+    const countMs = Date.now() - startedAt;
     const response = await ai.models.generateContent({
       model: IMAGE_MODEL,
       config: {
@@ -55,7 +110,7 @@ export async function POST(req: Request) {
         {
           role: "user",
           parts: [
-            { text: buildStylePrompt(scheme) },
+            { text: buildStylePrompt(scheme, style, people) },
             { inlineData: { mimeType: parsed.mimeType, data: parsed.data } },
           ],
         },
@@ -70,7 +125,10 @@ export async function POST(req: Request) {
           "transform ok",
           JSON.stringify({
             ms: Date.now() - startedAt,
+            countMs,
             scheme: scheme.id,
+            style: styleId,
+            people: people?.count ?? null,
             mime: parsed.mimeType,
             base64Chars: parsed.data.length,
             contentLength,
@@ -88,7 +146,7 @@ export async function POST(req: Request) {
       .trim();
     console.error(
       "transform failed: no image in Gemini response",
-      JSON.stringify({ ms: Date.now() - startedAt, scheme: scheme.id, reply: text.slice(0, 200) }),
+      JSON.stringify({ ms: Date.now() - startedAt, scheme: scheme.id, style: styleId, reply: text.slice(0, 200) }),
     );
     return NextResponse.json(
       { error: text ? `The photo booth answered with words instead of an image: ${text}` : "No image came back. Try again." },
@@ -100,6 +158,7 @@ export async function POST(req: Request) {
       JSON.stringify({
         ms: Date.now() - startedAt,
         scheme: scheme.id,
+        style: styleId,
         mime: parsed.mimeType,
         base64Chars: parsed.data.length,
         contentLength,
