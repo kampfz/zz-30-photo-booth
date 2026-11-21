@@ -205,11 +205,11 @@ export default function Home() {
 
       <div className="footer-wrap">
         <span className="deco-star" aria-hidden="true">★</span>
-        <svg className="deco-balloons" viewBox="0 0 90 110" aria-hidden="true">
-          <ellipse cx="28" cy="30" rx="20" ry="26" fill="#ffe600" stroke="#1c0a4d" strokeWidth="3" />
-          <ellipse cx="58" cy="26" rx="20" ry="26" fill="#ff3b30" stroke="#1c0a4d" strokeWidth="3" />
-          <ellipse cx="74" cy="52" rx="16" ry="21" fill="#2563eb" stroke="#1c0a4d" strokeWidth="3" />
-          <path d="M28 56 q-4 18 2 34 M58 52 q4 18 -2 34 M74 73 q-2 14 2 26" fill="none" stroke="#1c0a4d" strokeWidth="2" />
+        <svg className="deco-balloons" viewBox="0 0 96 118" overflow="visible" aria-hidden="true">
+          <ellipse cx="30" cy="32" rx="19" ry="25" fill="#ffe600" stroke="#1c0a4d" strokeWidth="3" />
+          <ellipse cx="60" cy="28" rx="19" ry="25" fill="#ff3b30" stroke="#1c0a4d" strokeWidth="3" />
+          <ellipse cx="76" cy="54" rx="15" ry="20" fill="#2563eb" stroke="#1c0a4d" strokeWidth="3" />
+          <path d="M30 57 q-4 18 2 34 M60 53 q4 18 -2 34 M76 74 q-2 14 2 24" fill="none" stroke="#1c0a4d" strokeWidth="2" />
         </svg>
         <p className="footer">Easy Lover • Back room • Tonight 9 PM – 12 AM</p>
       </div>
