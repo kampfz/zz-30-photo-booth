@@ -3,7 +3,7 @@
  *
  * Each transform builds its prompt from:
  *   - a ColorScheme (background gradient), picked by the client so two in a row never match,
- *   - a PosterStyle (lettering, layout, label stickers, decorations), picked at random on the
+ *   - a PosterStyle (lettering, layout, decorations), picked at random on the
  *     server by randomPosterStyle() so no two posters look the same,
  *   - a PeopleInfo (how many people are in the photo and who they are), found by a quick
  *     text-only Gemini call before the image call. Naming the exact people stops the image
@@ -119,9 +119,6 @@ const LAYOUTS: Variant[] = [
   },
 ];
 
-/** Words for the little cream label stickers (like the "Hooray!" / "Party Time" tickets on the invite). */
-const TICKET_WORDS = ["Hooray!", "Party Time", "Cheers!", "Turning 30!", "Let's Party!", "Woo hoo!"];
-
 /** Small extras. Kept light on purpose: the look is a clean collage, not a clip-art pile. */
 const EXTRAS: Variant[] = [
   { id: "none", text: "No other decorations." },
@@ -135,7 +132,6 @@ export interface PosterStyle {
   greeting: Variant;
   names: Variant;
   layout: Variant;
-  tickets: string[];
   extras: Variant;
 }
 
@@ -143,22 +139,19 @@ function pick<T>(list: T[]): T {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-/** Pick a random lettering style, layout, 0 to 2 label stickers and a decoration level. */
+/** Pick a random lettering style, layout and decoration level. */
 export function randomPosterStyle(): PosterStyle {
-  const ticketCount = pick([0, 1, 2, 2]);
-  const tickets = [...TICKET_WORDS].sort(() => Math.random() - 0.5).slice(0, ticketCount);
   return {
     greeting: pick(GREETING_STYLES),
     names: pick(NAME_STYLES),
     layout: pick(LAYOUTS),
-    tickets,
     extras: pick(EXTRAS),
   };
 }
 
-/** A short id for logs, e.g. "zebra-yellow/gold-3d/arch-top/t2/none". */
+/** A short id for logs, e.g. "zebra-yellow/gold-3d/arch-top/none". */
 export function posterStyleId(style: PosterStyle): string {
-  return [style.greeting.id, style.names.id, style.layout.id, `t${style.tickets.length}`, style.extras.id].join("/");
+  return [style.greeting.id, style.names.id, style.layout.id, style.extras.id].join("/");
 }
 
 /* ------------------------------------------------------------------ */
@@ -197,18 +190,6 @@ function describePeople(info: PeopleInfo): string {
 
 /** Build the Gemini image prompt for one scheme, one poster style and (if known) the people in the photo. */
 export function buildStylePrompt(scheme: ColorScheme, style: PosterStyle, people?: PeopleInfo | null): string {
-  const ticketLine =
-    style.tickets.length > 0
-      ? [
-          `Also add ${style.tickets.length === 1 ? "one small label sticker" : "two small label stickers"},`,
-          `reading ${style.tickets.map((t) => `"${t}"`).join(" and ")}${style.tickets.length === 2 ? ", stacked and slightly overlapping" : ""}:`,
-          "plain cream rectangles with black sans-serif text in normal capitalization, a hard gray drop shadow,",
-          "tilted a few degrees, placed in an empty corner away from the faces.",
-        ].join(" ")
-      : "";
-
-  const words = ["'happy birthday'", "'zach & zoe'", ...style.tickets.map((t) => `'${t}'`)].join(", ");
-
   return [
     // 1. People first: the most important rule.
     "Turn this photo into a retro early-2000s birthday collage poster, like a Y2K party invite made with Microsoft WordArt.",
@@ -230,11 +211,11 @@ export function buildStylePrompt(scheme: ColorScheme, style: PosterStyle, people
     "",
     // 3. Lettering.
     "LETTERING (retro WordArt):",
-    `The only words in the image are ${words}. Spell them exactly. 'happy birthday' and 'zach & zoe' are all lowercase. No other words, letters, numbers, dates or captions anywhere.`,
+    `The only words in the image are 'happy birthday' and 'zach & zoe'. Spell them exactly. 'happy birthday' and 'zach & zoe' are all lowercase. No other words, letters, numbers, dates or captions anywhere.`,
     `'happy birthday': ${style.greeting.text}.`,
     `'zach & zoe': ${style.names.text}.`,
     style.layout.text,
-    ...(ticketLine ? [ticketLine] : []),
+    "No label stickers, tags, banners, speech bubbles or text boxes.",
     "The lettering must look like genuine 1990s/2000s WordArt: bold, a bit cheesy, flat outlines and hard drop shadows. Not modern, not hand-lettered, not neon, not graffiti.",
     "The lettering is big and fills the open gradient space. It never covers a face, head or hair. It may overlap the bottom of someone's legs or clothing a little, like a collage.",
     "",
