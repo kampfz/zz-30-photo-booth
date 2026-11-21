@@ -54,7 +54,8 @@ Edit `lib/style.ts`. Each transform builds its prompt from three things:
   Cherry Cola). It is picked at random and never repeats twice in a row.
 - **A poster style** (`randomPosterStyle()`). It picks the lettering for "happy birthday"
   (zebra stripe, rainbow, chrome, wave), the lettering for "zach & zoe" (gold 3D, fire 3D,
-  candy bubble, blue 3D), the layout and a light decoration, so no two posters look the same. Entries listed
+  candy bubble, blue 3D), the layout and a set of little clip-art stickers (party,
+  sparkle, Y2K butterflies and daisies, cheers, mix), so no two posters look the same. Entries listed
   twice in those arrays come up more often.
 - **The people in the photo.** Before the image call, a quick text-only call
   (`PEOPLE_MODEL`, `gemini-2.5-flash`) counts the people and describes each one from left to
@@ -63,7 +64,7 @@ Edit `lib/style.ts`. Each transform builds its prompt from three things:
   "keep the same people" wording.
 
 The image model is `IMAGE_MODEL` in the same file. Each transform is logged with its scheme,
-style id (for example `zebra-yellow/gold-3d/arch-top/none`) and people count, so you can
+style id (for example `zebra-yellow/gold-3d/arch-top/party`) and people count, so you can
 match a bad output to the style that made it.
 
 ## Notes

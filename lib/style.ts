@@ -3,7 +3,7 @@
  *
  * Each transform builds its prompt from:
  *   - a ColorScheme (background gradient), picked by the client so two in a row never match,
- *   - a PosterStyle (lettering, layout, decorations), picked at random on the
+ *   - a PosterStyle (lettering, layout, clip-art stickers), picked at random on the
  *     server by randomPosterStyle() so no two posters look the same,
  *   - a PeopleInfo (how many people are in the photo and who they are), found by a quick
  *     text-only Gemini call before the image call. Naming the exact people stops the image
@@ -119,13 +119,14 @@ const LAYOUTS: Variant[] = [
   },
 ];
 
-/** Small extras. Kept light on purpose: the look is a clean collage, not a clip-art pile. */
+/** Little clip-art sticker sets scattered around the poster. One set is picked per poster. */
 const EXTRAS: Variant[] = [
-  { id: "none", text: "No other decorations." },
-  { id: "none", text: "No other decorations." },
-  { id: "sparkles", text: "Add three or four small white four-point sparkle stars near the lettering. Nothing else." },
-  { id: "confetti", text: "Add a light sprinkle of small confetti dots near the edges of the poster. Nothing else." },
-  { id: "balloons", text: "Add two or three small cartoon clip-art balloons in one empty corner. Nothing else." },
+  { id: "party", text: "party hats, balloons, a little birthday cake and confetti" },
+  { id: "party", text: "party hats, balloons, a little birthday cake and confetti" },
+  { id: "sparkle", text: "gold stars, starbursts, four-point sparkles and little glossy hearts" },
+  { id: "y2k", text: "butterflies, daisies, glossy hearts and sparkle stars" },
+  { id: "cheers", text: "champagne glasses, a disco ball, music notes and gold stars" },
+  { id: "mix", text: "balloons, gold stars, a party hat, a little birthday cake and sparkles" },
 ];
 
 export interface PosterStyle {
@@ -139,7 +140,7 @@ function pick<T>(list: T[]): T {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-/** Pick a random lettering style, layout and decoration level. */
+/** Pick a random lettering style, layout and sticker set. */
 export function randomPosterStyle(): PosterStyle {
   return {
     greeting: pick(GREETING_STYLES),
@@ -149,7 +150,7 @@ export function randomPosterStyle(): PosterStyle {
   };
 }
 
-/** A short id for logs, e.g. "zebra-yellow/gold-3d/arch-top/none". */
+/** A short id for logs, e.g. "zebra-yellow/gold-3d/arch-top/party". */
 export function posterStyleId(style: PosterStyle): string {
   return [style.greeting.id, style.names.id, style.layout.id, style.extras.id].join("/");
 }
@@ -221,8 +222,10 @@ export function buildStylePrompt(scheme: ColorScheme, style: PosterStyle, people
     "",
     // 4. Decorations and mood.
     "DECORATIONS:",
-    style.extras.text,
-    "Keep it clean and graphic like a cut-and-paste collage: bright gradient, crisp cutout people, big retro lettering.",
+    `Scatter 6 to 10 little Y2K clip-art stickers around the open gradient space and the edges of the poster: ${style.extras.text}.`,
+    "Each sticker is small, flat retro clip art with a thin dark outline and a thin white sticker border, slightly tilted, in bright colors that pop against the gradient.",
+    "Stickers never cover a face or the lettering. Stickers are objects only: no characters, animals, faces or people.",
+    "A playful cut-and-paste collage: bright gradient, crisp cutout people, big retro lettering, a scatter of little stickers.",
     "",
     people
       ? `Before finishing, count the people in the poster: it must be exactly ${people.count}.`
