@@ -95,26 +95,36 @@ export default function Home() {
       </div>
 
       <div className="sticker-row">
-        <span className="sticker">Hooray! Party Time</span>
+        <span className="sticker">Hooray!</span>
+        <span className="sticker">Party Time</span>
       </div>
 
       <h1 className="wordart">Zach &amp; Zoe</h1>
       <div className="wordart-sub">turn 30!</div>
 
-      <p className="tagline">
-        Snap a pic at the party and give it the full Y2K treatment. Stars, confetti, big energy.
-      </p>
+      <div className="tagline-wrap">
+        <svg className="deco-hat" viewBox="0 0 64 72" aria-hidden="true">
+          <path d="M32 6 L56 60 Q32 68 8 60 Z" fill="#ff7fb8" stroke="#1c0a4d" strokeWidth="3" strokeLinejoin="round" />
+          <circle cx="32" cy="8" r="6" fill="#1c0a4d" />
+          <circle cx="26" cy="34" r="4" fill="#ffe600" />
+          <circle cx="38" cy="46" r="4" fill="#ffe600" />
+          <circle cx="29" cy="56" r="3.5" fill="#fff" />
+        </svg>
+        <p className="tagline">
+          Snap a pic, make it Y2K, take it home. The official Easy Lover birthday photo booth.
+        </p>
+      </div>
 
       {step === "pick" && (
         <section className="card">
-          <h2>Step right up</h2>
-          <p>Take a fresh photo or upload one from your camera roll. Then we make it Y2K.</p>
+          <h2>Step 1 — Get your photo</h2>
+          <p>Take a fresh one or pick a favorite from your camera roll. Works best with faces in good light.</p>
           <div className="button-row">
             <button className="btn btn-pink" type="button" onClick={() => cameraInput.current?.click()}>
-              Take a photo
+              📷 Take a Photo
             </button>
-            <button className="btn btn-yellow" type="button" onClick={() => uploadInput.current?.click()}>
-              Upload a photo
+            <button className="btn btn-royal" type="button" onClick={() => uploadInput.current?.click()}>
+              🖼️ Upload a Photo
             </button>
           </div>
           <input
@@ -193,7 +203,16 @@ export default function Home() {
         </section>
       )}
 
-      <p className="footer">Zach &amp; Zoe turn 30. Easy Lover, November 21, 2026.</p>
+      <div className="footer-wrap">
+        <span className="deco-star" aria-hidden="true">★</span>
+        <svg className="deco-balloons" viewBox="0 0 90 110" aria-hidden="true">
+          <ellipse cx="28" cy="30" rx="20" ry="26" fill="#ffe600" stroke="#1c0a4d" strokeWidth="3" />
+          <ellipse cx="58" cy="26" rx="20" ry="26" fill="#ff3b30" stroke="#1c0a4d" strokeWidth="3" />
+          <ellipse cx="74" cy="52" rx="16" ry="21" fill="#2563eb" stroke="#1c0a4d" strokeWidth="3" />
+          <path d="M28 56 q-4 18 2 34 M58 52 q4 18 -2 34 M74 73 q-2 14 2 26" fill="none" stroke="#1c0a4d" strokeWidth="2" />
+        </svg>
+        <p className="footer">Easy Lover • Back room • Tonight 9 PM – 12 AM</p>
+      </div>
     </main>
   );
 }

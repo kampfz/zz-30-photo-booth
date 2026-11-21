@@ -11,7 +11,7 @@ body {
 }
 
 body {
-  background: linear-gradient(135deg, #d6006e 0%, #ff2e7e 22%, #ff6a00 55%, #ffb800 82%, #ffe600 100%);
+  background: linear-gradient(180deg, #e6007e 0%, #ff2e7e 28%, #ff6a00 58%, #ffb800 82%, #ffe600 100%);
   background-attachment: fixed;
   color: #1c0a4d;
   font-family: var(--font-body), system-ui, sans-serif;
@@ -68,23 +68,33 @@ button {
 
 .sticker-row {
   display: flex;
-  justify-content: flex-end;
-  margin: 4px 0 0;
+  justify-content: center;
+  gap: 12px;
+  margin: 10px 0 0;
+}
+
+.sticker-row .sticker:first-child {
+  transform: rotate(-2deg);
+}
+
+.sticker-row .sticker:last-child {
+  transform: rotate(2deg);
 }
 
 .wordart {
   font-family: var(--font-display), "Arial Black", sans-serif;
-  font-size: clamp(52px, 15vw, 92px);
+  font-size: clamp(56px, 16vw, 96px);
   font-weight: 400;
   line-height: 0.95;
   margin: 10px 0 0;
   text-align: center;
   transform: rotate(-3deg);
-  background: linear-gradient(180deg, #fff7ae 15%, #ffe600 45%, #ffb800 75%);
+  background: repeating-linear-gradient(-55deg, #fff3a0 0 7px, #ffe600 7px 14px, #ffcf00 14px 21px);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(3px 3px 0 #1e40af) drop-shadow(6px 6px 0 rgba(28, 10, 77, 0.55));
+  -webkit-text-stroke: 2px #1e40af;
+  filter: drop-shadow(4px 4px 0 #ff2e7e) drop-shadow(8px 8px 0 rgba(28, 10, 77, 0.45));
 }
 
 .wordart-sub {
@@ -98,7 +108,8 @@ button {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(2px 2px 0 #fff) drop-shadow(4px 4px 0 rgba(28, 10, 77, 0.6));
+  -webkit-text-stroke: 1px #7c2d12;
+  filter: drop-shadow(3px 3px 0 #ff8c00) drop-shadow(6px 6px 0 rgba(28, 10, 77, 0.5));
 }
 
 .tagline {
@@ -167,7 +178,7 @@ button {
 }
 
 .btn-pink {
-  background: #ff2e7e;
+  background: #e6007e;
   color: #fff;
 }
 
@@ -179,6 +190,11 @@ button {
 .btn-blue {
   background: #2ee6ff;
   color: #1c0a4d;
+}
+
+.btn-royal {
+  background: #2563eb;
+  color: #fff;
 }
 
 .btn-ghost {
@@ -267,4 +283,40 @@ button {
   margin-top: 28px;
   text-align: center;
   text-shadow: 1px 1px 0 rgba(28, 10, 77, 0.5);
+}
+
+.tagline-wrap {
+  position: relative;
+}
+
+.deco-hat {
+  left: -2px;
+  pointer-events: none;
+  position: absolute;
+  top: -32px;
+  transform: rotate(-14deg);
+  width: 56px;
+}
+
+.footer-wrap {
+  position: relative;
+}
+
+.deco-star {
+  bottom: 34px;
+  color: #3b82f6;
+  font-size: 44px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  text-shadow: 2px 2px 0 #1c0a4d;
+  transform: rotate(-12deg);
+}
+
+.deco-balloons {
+  bottom: 30px;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  width: 72px;
 }
