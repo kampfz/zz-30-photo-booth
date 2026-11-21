@@ -223,8 +223,10 @@ export function buildStylePrompt(scheme: ColorScheme, style: PosterStyle, people
     "CUTOUT AND BACKGROUND:",
     `Cut the people out cleanly, like photo-collage stickers, and place them on a smooth, saturated gradient of ${scheme.gradient} that fills the whole image edge to edge.`,
     "Remove everything else from the original photo: the room, walls, sky, trees, furniture, tables, floor. Things a person is holding or wearing stay with them (drinks, bags, umbrellas, hats).",
-    "The poster is a tall 9:16 portrait (1080 by 1920). If the photo is wider than that, shrink the group to fit and leave open gradient space above and below them. Fill that open space with the lettering and the gradient, never with extra people. Every head and face must be fully in frame.",
-    "Full bleed: no border, no white frame, no letterboxing, no visible rectangle or edge of the original photo.",
+    "The poster is a tall 9:16 portrait (1080 by 1920). Make the cutout people as large as possible while keeping every head and face fully in frame.",
+    "Do NOT paste the original photo into the poster as a rectangle, box, inset or picture-in-picture. Only the cut-out people move onto the poster, never the photo's frame or any of its background.",
+    "Any space the people do not cover is the gradient and the lettering: never extra people, and never part of the original photo.",
+    "Full bleed: the gradient runs to every edge of the image. No border, no white frame, no letterboxing, and no straight edge, corner or rectangle of the original photo visible anywhere.",
     "",
     // 3. Lettering.
     "LETTERING (retro WordArt):",
