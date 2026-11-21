@@ -41,28 +41,6 @@ button {
   position: relative;
 }
 
-.stars {
-  font-size: 22px;
-  letter-spacing: 10px;
-  text-align: center;
-}
-
-.stars span:nth-child(1) { color: #ffe600; }
-.stars span:nth-child(2) { color: #ffffff; }
-.stars span:nth-child(3) { color: #2ee6ff; }
-.stars span:nth-child(4) { color: #ff2e7e; }
-.stars span:nth-child(5) { color: #7dff5e; }
-
-.stars span {
-  animation: twinkle 2.2s ease-in-out infinite;
-  display: inline-block;
-}
-
-.stars span:nth-child(2) { animation-delay: 0.4s; }
-.stars span:nth-child(3) { animation-delay: 0.8s; }
-.stars span:nth-child(4) { animation-delay: 1.2s; }
-.stars span:nth-child(5) { animation-delay: 1.6s; }
-
 .sticker {
   background: #fffbe0;
   border: 3px solid #1c0a4d;
@@ -327,11 +305,6 @@ button {
 }
 
 /* Background icon animations */
-@keyframes twinkle {
-  0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
-  50% { opacity: 0.55; transform: scale(0.8) rotate(12deg); }
-}
-
 @keyframes star-twinkle {
   0%, 100% { opacity: 1; transform: rotate(-12deg) scale(1); }
   50% { opacity: 0.6; transform: rotate(-4deg) scale(0.85); }
@@ -345,6 +318,35 @@ button {
 @keyframes float-up {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
+}
+
+/* Result reveal animation (plays once when the AI image lands) */
+.reveal-wrap {
+  position: relative;
+}
+
+.reveal-wrap .photo-frame {
+  animation: reveal-pop 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+
+@keyframes reveal-pop {
+  from { opacity: 0; transform: scale(0.92) translateY(14px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.reveal-balloon {
+  animation: reveal-float 1.8s ease-out both;
+  bottom: 8px;
+  pointer-events: none;
+  position: absolute;
+  width: 44px;
+  z-index: 2;
+}
+
+@keyframes reveal-float {
+  0% { opacity: 0; transform: translateY(30px) scale(0.6); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-200px) scale(1.05); }
 }
 
 /* Processing animation (shown while the AI works, input photo hidden) */
@@ -386,12 +388,13 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .stars span,
   .deco-hat,
   .deco-balloons,
   .deco-star,
   .processing-stars span,
-  .processing .loading {
+  .processing .loading,
+  .reveal-wrap .photo-frame,
+  .reveal-balloon {
     animation: none;
   }
 }

@@ -80,6 +80,9 @@ export function buildStylePrompt(scheme: ColorScheme): string {
     "chunky WordArt line with a striped yellow fill, blue outline and hard drop shadow, spelled",
     "exactly like that. No other text, words, letters or numbers anywhere in the image — no extra",
     "slogans, no 'turn 30', no dates, no captions.",
+    "Place the words on the background only, in clear space at the top or bottom of the poster —",
+    "NEVER across a person's face, head, hair or body. Every face must stay fully visible and",
+    "uncovered by text, stickers or decorations.",
     "Messy, loud, playful and over the top, NOT clean, NOT minimal, NOT modern flat design.",
   ].join(" ");
 }

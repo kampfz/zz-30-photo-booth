@@ -211,14 +211,6 @@ export default function Home() {
 
   return (
     <main className="booth">
-      <div className="stars" aria-hidden="true">
-        <span>★</span>
-        <span>★</span>
-        <span>★</span>
-        <span>★</span>
-        <span>★</span>
-      </div>
-
       <div className="sticker-row">
         <span className="sticker">Hooray!</span>
         <span className="sticker">Party Time</span>
@@ -310,10 +302,24 @@ export default function Home() {
         <section className="card">
           <h2>It is so Y2K</h2>
           <p>Save it, share it, show it off. Then go take another one.</p>
-          <img className="photo-frame" src={transformed} alt="Your photo, transformed into a Y2K poster" />
+          <div className="reveal-wrap">
+            <svg className="reveal-balloon" style={{ left: "6%", animationDelay: "0.05s" }} viewBox="0 0 40 62" aria-hidden="true">
+              <ellipse cx="20" cy="20" rx="14" ry="18" fill="#ffe600" stroke="#1c0a4d" strokeWidth="2.5" />
+              <path d="M20 38 q-3 12 2 22" fill="none" stroke="#1c0a4d" strokeWidth="1.8" />
+            </svg>
+            <svg className="reveal-balloon" style={{ left: "44%", animationDelay: "0.2s" }} viewBox="0 0 40 62" aria-hidden="true">
+              <ellipse cx="20" cy="20" rx="14" ry="18" fill="#ff3b30" stroke="#1c0a4d" strokeWidth="2.5" />
+              <path d="M20 38 q3 12 -2 22" fill="none" stroke="#1c0a4d" strokeWidth="1.8" />
+            </svg>
+            <svg className="reveal-balloon" style={{ left: "82%", animationDelay: "0.35s" }} viewBox="0 0 40 62" aria-hidden="true">
+              <ellipse cx="20" cy="20" rx="14" ry="18" fill="#2563eb" stroke="#1c0a4d" strokeWidth="2.5" />
+              <path d="M20 38 q-3 12 2 22" fill="none" stroke="#1c0a4d" strokeWidth="1.8" />
+            </svg>
+            <img className="photo-frame" src={transformed} alt="Your photo, transformed into a Y2K poster" />
+          </div>
           <div className="button-row" style={{ marginTop: 16 }}>
             <button className="btn btn-blue" type="button" onClick={share}>
-              save/share
+              SAVE/SHARE
             </button>
             <button className="btn btn-ghost" type="button" onClick={retake}>
               Take another
