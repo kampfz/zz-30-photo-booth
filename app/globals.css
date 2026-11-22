@@ -381,3 +381,66 @@ button {
     animation: none;
   }
 }
+
+/* Admin gallery (/admin) */
+.admin {
+  box-sizing: border-box;
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 24px 16px 48px;
+}
+
+.admin h1 {
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-size: 32px;
+  margin: 0 0 4px;
+}
+
+.admin-head p {
+  font-weight: 800;
+  margin: 0 0 20px;
+}
+
+.admin a {
+  color: #1c0a4d;
+}
+
+.admin-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-item {
+  background: #fff;
+  border: 3px solid #1c0a4d;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0 #1c0a4d;
+  overflow: hidden;
+}
+
+.admin-item img {
+  aspect-ratio: 9 / 16;
+  background: #f3e8ff;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+}
+
+.admin-meta {
+  display: flex;
+  font-size: 13px;
+  font-weight: 800;
+  justify-content: space-between;
+  padding: 8px 10px 2px;
+}
+
+.admin-style {
+  color: #6b5a8e;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  padding: 0 10px 10px;
+}

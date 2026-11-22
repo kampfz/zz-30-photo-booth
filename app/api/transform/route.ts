@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
+import { savePoster } from "@/lib/gallery";
 import {
   buildStylePrompt,
   COLOR_SCHEMES,
@@ -134,8 +135,12 @@ export async function POST(req: Request) {
             contentLength,
           }),
         );
+        const mimeType = inline.mimeType ?? "image/png";
+        const data = inline.data;
+        // Save a copy for the /admin gallery after the guest already has their poster.
+        after(() => savePoster({ mimeType, data }, { scheme: scheme.id, style: styleId }));
         return NextResponse.json({
-          image: `data:${inline.mimeType ?? "image/png"};base64,${inline.data}`,
+          image: `data:${mimeType};base64,${data}`,
         });
       }
     }

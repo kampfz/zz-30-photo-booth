@@ -67,8 +67,25 @@ The image model is `IMAGE_MODEL` in the same file. Each transform is logged with
 style id (for example `zebra-yellow/gold-3d/arch-top/party`) and people count, so you can
 match a bad output to the style that made it.
 
+## Gallery of every poster (/admin)
+
+Every poster the booth makes is saved to a **private** Vercel Blob store
+(`zz-30-photo-booth-posters`, connected to the project, which sets `BLOB_READ_WRITE_TOKEN`).
+The save runs after the guest already has their poster, so it never slows the booth down, and a
+failed save never breaks it.
+
+Open `/admin` (for example `https://zz-30-photo-booth.vercel.app/admin`) to see them all, newest
+first, with a download link on each. It is protected by a password:
+
+1. In Vercel, add an environment variable `ADMIN_PASSWORD` (Production) with a password of your choice.
+2. Redeploy (or push any commit).
+3. Open `/admin`. The browser asks for a username and password: any username, your password.
+
+Without `ADMIN_PASSWORD` the gallery stays locked. Only the generated posters are saved, never
+the guests' original photos. Code: `lib/gallery.ts`, `app/admin/`, `middleware.ts`.
+
 ## Notes
 
-- Photos are not stored on the server.
+- Guests' original photos are never stored. Generated posters are saved to the private Blob store for the /admin gallery.
 - Photos are shrunk to a 1600px max edge as a JPEG before upload. Vercel rejects request bodies over ~4.5 MB, and a full-res iPhone photo is bigger than that once base64-encoded (this was the Nov 21 413). If the browser cannot decode the photo (for example HEIC in Chrome), the original file is sent untouched instead.
 - Client-side errors are reported to POST /api/log so they show up in the Vercel logs. Transform requests are logged with timing, color scheme, poster style, people count, and size.
